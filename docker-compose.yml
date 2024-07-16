@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: workshop_db
+      MYSQL_USER: workshop_user
+      MYSQL_PASSWORD: workshop_password
+    volumes:
+      - shared-data:/data #/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  spark:
+    image: bitnami/spark:latest
+    container_name: spark
+    environment:
+      - SPARK_MODE=master
+    volumes:
+      - shared-data:/data
+    ports:
+      - "8081:8080" # Map Spark web UI to port 8081
+      - "7077:7077"
+  
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    volumes:
+      - shared-data:/data #/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  vespa:
+    image: vespaengine/vespa
+    container_name: vespa
+    hostname: vespa-container
+    # environment:
+    #   VESPA_CONFIGSERVERS: vespa
+    volumes:
+      - shared-data:/data #/vespa-data
+    ports:
+      - "8080:8080"  # Map Vespa HTTP to port 8082
+      - "19071:19071"
+
+  jupyterhub:
+    image: custom-jupyterhub:latest
+    container_name: jupyterhub
+    environment:
+      JUPYTERHUB_API_TOKEN: your_api_token
+    volumes:
+      - ./jupyterhub_config:/srv/jupyterhub
+      # - /etc/passwd:/etc/passwd:ro
+      # - /etc/shadow:/etc/shadow:ro
+      # - /etc/group:/etc/group:ro
+      - shared-data:/data
+      - ./jupyter-home:/home/francois.weber
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mysql
+      - spark
+      - elasticsearch
+      - vespa
+
+volumes:
+  shared-data:
