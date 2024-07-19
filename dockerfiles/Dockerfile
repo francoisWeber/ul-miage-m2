@@ -18,4 +18,4 @@ RUN chmod +x /usr/local/bin/user_init.sh
 RUN /usr/local/bin/user_init.sh
 
 # Prepare Jupyterhub stuff
-RUN pip install jupyterhub
+RUN pip install jupyterhub mysql-connector-python

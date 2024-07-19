@@ -21,6 +21,9 @@ services:
         reservations:
           cpus: '0.5'
           memory: 500M
+    volumes:
+      - ./datasets:/datasets:ro
+      - shared-data:/data
 
   spark-worker:
     image: bitnami/spark:3.5.1
@@ -43,6 +46,9 @@ services:
         reservations:
           cpus: '2'
           memory: '4G'
+    volumes:
+      - ./datasets:/datasets:ro
+      - shared-data:/data
   
   mysql:
     image: mysql:latest
@@ -53,7 +59,8 @@ services:
       MYSQL_USER: workshop_user
       MYSQL_PASSWORD: workshop_password
     volumes:
-      - shared-data:/data #/var/lib/mysql
+      - ./datasets:/datasets:ro
+      - shared-data:/data
     ports:
       - "3306:3306"
     deploy:
@@ -72,6 +79,7 @@ services:
       - discovery.type=single-node
       - xpack.security.enabled=false
     volumes:
+      - ./datasets:/datasets:ro
       - shared-data:/data
     ports:
       - "9200:9200"
@@ -90,7 +98,8 @@ services:
     container_name: vespa
     hostname: vespa-container
     volumes:
-      - shared-data:/data #/vespa-data
+      - ./datasets:/datasets:ro
+      - shared-data:/data
     ports:
       - "8082:8080"  # Map Vespa HTTP to port 8082
       - "19071:19071"
@@ -112,8 +121,9 @@ services:
       JUPYTERHUB_API_TOKEN: your_api_token
     volumes:
       - ./jupyterhub_config:/srv/jupyterhub
-      - shared-data:/data
       - ./jupyter-home:/home/francois.weber
+      - ./datasets:/datasets:ro
+      - shared-data:/data
     ports:
       - "8000:8000"
     depends_on:
