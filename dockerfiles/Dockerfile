@@ -18,4 +18,9 @@ RUN chmod +x /usr/local/bin/user_init.sh
 RUN /usr/local/bin/user_init.sh
 
 # Prepare Jupyterhub stuff
-RUN pip install jupyterhub mysql-connector-python
+RUN pip install jupyterhub 
+
+# Prepare other deps for the workshop
+RUN pip install pandas requests elasticsearch mysql-connector-python pyvespa matplotlib
+
+mysql -p workshop_db -e "SELECT * FROM beers INTO OUTFILE '/var/lib/mysql-files/beers.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';"

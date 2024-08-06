@@ -1,3 +1,6 @@
+jupyter-home/*.*
+jupyterhub_config/vespa*
+
 .local/
 .npm/
 jupyterhub_cookie_secret
